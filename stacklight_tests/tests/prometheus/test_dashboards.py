@@ -34,28 +34,30 @@ def get_all_grafana_dashboards_names():
     dashboards = {
         "Apache": "apache",
         "Cassandra": "opencontrail",
-        "Calico cluster monitoring (via Prometheus)": "kubernetes",
+        "Calico": "kubernetes",
         "Cinder": "cinder",
         "Docker": "docker",
         "Elasticsearch": "elasticsearch",
-        "Etcd": "etcd",
+        "Etcd Cluster": "etcd",
         "Glance": "glance",
         "GlusterFS": "glusterfs",
         "HAProxy": "haproxy",
         "Hypervisor": "service.nova.compute.kvm",
         "Heat": "heat",
         "InfluxDB": "influxdb",
+        "InfluxDB Relay": "influxdb",
         "Keystone": "keystone",
         "Kibana": "kibana",
-        "Kubernetes App Metrics": "kubernetes",
-        "Kubernetes cluster monitoring (via Prometheus)": "kubernetes",
+        "Kubernetes cluster monitoring": "kubernetes",
         "Memcached": "memcached",
         "MySQL": "galera.master",
         "Neutron": "service.neutron.control.cluster",
         "Nova": "nova",
+        "Ntp": "linux",
         "Nginx": "nginx",
         "OpenContrail": "opencontrail",
         "Prometheus Performances": "prometheus",
+        "Prometheus Stats": "prometheus",
         "RabbitMQ": "rabbitmq",
         "System": "linux",
         "Remote storage adapter": "influxdb",
@@ -178,3 +180,13 @@ def test_grafana_dashboard_panel_queries(
 
     assert (len(dashboard_results[PanelStatus.fail]) == 0 or
             len(dashboard_results[PanelStatus.partial_fail]) == 0), error_msg
+
+
+def test_panels_fixture(grafana_client):
+    dashboards = grafana_client.get_all_dashboards_names()
+    fixture_dashboards = get_all_grafana_dashboards_names().keys()
+    missing_dashboards = set(dashboards).difference(set(fixture_dashboards))
+
+    assert len(missing_dashboards) == 0, \
+        ("Update test data fixture with the missing dashboards: "
+         "{}".format(missing_dashboards))
